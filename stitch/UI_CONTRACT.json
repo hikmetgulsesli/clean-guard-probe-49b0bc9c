@@ -1,0 +1,70 @@
+[
+  {
+    "screenId": "6bbfeb851eec4fb981515e05f1ec7ae1",
+    "screenTitle": "Status Utility - Clean Guard Probe",
+    "deviceType": "DESKTOP",
+    "elements": [
+      {
+        "type": "button",
+        "label": "refresh",
+        "line": 123
+      },
+      {
+        "type": "button",
+        "label": "settings",
+        "line": 126
+      },
+      {
+        "type": "button",
+        "label": "Refresh Status",
+        "line": 153
+      },
+      {
+        "type": "button",
+        "label": "Retry Now",
+        "line": 205
+      },
+      {
+        "type": "input",
+        "label": "checkbox",
+        "inputType": "checkbox",
+        "line": 148
+      }
+    ],
+    "navigation": [],
+    "buttons": [
+      {
+        "type": "button",
+        "label": "refresh",
+        "line": 123
+      },
+      {
+        "type": "button",
+        "label": "settings",
+        "line": 126
+      },
+      {
+        "type": "button",
+        "label": "Refresh Status",
+        "line": 153
+      },
+      {
+        "type": "button",
+        "label": "Retry Now",
+        "line": 205
+      }
+    ],
+    "inputs": [
+      {
+        "type": "input",
+        "label": "checkbox",
+        "inputType": "checkbox",
+        "line": 148
+      }
+    ],
+    "hardcodedData": [],
+    "totalInteractive": 5,
+    "requiresRouter": false,
+    "requiresDragDrop": false
+  }
+]
