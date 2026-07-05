@@ -1,0 +1,37 @@
+[
+  {
+    "screenId": "6bbfeb851eec4fb981515e05f1ec7ae1",
+    "title": "Status Utility - Clean Guard Probe",
+    "componentName": "StatusUtilityCleanGuardProbe",
+    "file": "src/screens/StatusUtilityCleanGuardProbe.tsx",
+    "buttons": 4,
+    "inputs": 1,
+    "links": 0,
+    "actions": [
+      {
+        "id": "refresh-1",
+        "kind": "button",
+        "label": "refresh",
+        "index": 0
+      },
+      {
+        "id": "settings-2",
+        "kind": "button",
+        "label": "settings",
+        "index": 1
+      },
+      {
+        "id": "refresh-status-3",
+        "kind": "button",
+        "label": "Refresh Status",
+        "index": 2
+      },
+      {
+        "id": "retry-now-4",
+        "kind": "button",
+        "label": "Retry Now",
+        "index": 3
+      }
+    ]
+  }
+]
