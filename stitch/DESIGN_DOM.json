@@ -1,0 +1,251 @@
+{
+  "generatedAt": "2026-07-05T03:29:34.896Z",
+  "screenCount": 1,
+  "screens": {
+    "6bbfeb851eec4fb981515e05f1ec7ae1": {
+      "screenId": "6bbfeb851eec4fb981515e05f1ec7ae1",
+      "materialSymbolsRequired": true,
+      "sections": [
+        {
+          "tag": "header",
+          "layout": "flex-row",
+          "classes": [
+            "bg-surface",
+            "flex",
+            "justify-between",
+            "items-center",
+            "w-full",
+            "px-margin-mobile",
+            "md:px-margin-desktop",
+            "h-12",
+            "border-b",
+            "border-surface-variant"
+          ],
+          "childCount": 2
+        },
+        {
+          "tag": "main",
+          "layout": "flex-col",
+          "classes": [
+            "flex-1",
+            "flex",
+            "flex-col",
+            "items-center",
+            "p-md",
+            "md:p-lg"
+          ],
+          "childCount": 27
+        }
+      ],
+      "buttons": [
+        {
+          "kind": "button",
+          "label": "refresh",
+          "classes": [
+            "p-sm",
+            "rounded",
+            "text-on-surface-variant",
+            "hover:bg-surface-container-low",
+            "transition-colors",
+            "flex",
+            "items-center",
+            "justify-center",
+            "active:opacity-80"
+          ],
+          "icon": "refresh",
+          "action": "click-action",
+          "expectedBehavior": "produce visible DOM/state/URL feedback; never empty onClick"
+        },
+        {
+          "kind": "button",
+          "label": "settings",
+          "classes": [
+            "p-sm",
+            "rounded",
+            "text-on-surface-variant",
+            "hover:bg-surface-container-low",
+            "transition-colors",
+            "flex",
+            "items-center",
+            "justify-center",
+            "active:opacity-80"
+          ],
+          "icon": "settings",
+          "action": "navigate",
+          "expectedBehavior": "navigate:/settings",
+          "expectedRoute": "/settings",
+          "routeInferred": true
+        },
+        {
+          "kind": "button",
+          "label": "Refresh Status",
+          "classes": [
+            "bg-primary",
+            "text-on-primary",
+            "font-body-sm",
+            "text-body-sm",
+            "px-md",
+            "py-sm",
+            "rounded",
+            "hover:opacity-90",
+            "active:opacity-100",
+            "transition-opacity",
+            "flex",
+            "items-center",
+            "gap-xs"
+          ],
+          "icon": "sync",
+          "action": "click-action",
+          "expectedBehavior": "produce visible DOM/state/URL feedback; never empty onClick"
+        },
+        {
+          "kind": "button",
+          "label": "Retry Now",
+          "classes": [
+            "text-on-error-container",
+            "font-data-label",
+            "text-data-label",
+            "hover:underline",
+            "px-sm",
+            "py-xs"
+          ],
+          "icon": null,
+          "action": "retry",
+          "expectedBehavior": "retry the failed action and show loading/error feedback"
+        }
+      ],
+      "inputs": [
+        {
+          "kind": "input",
+          "type": "checkbox",
+          "label": "checkbox",
+          "placeholder": "",
+          "name": "",
+          "classes": [
+            "sr-only",
+            "peer"
+          ],
+          "expectedBehavior": "controlled value with onChange; validation if required by PRD"
+        }
+      ],
+      "navLinks": [],
+      "cards": [],
+      "icons": [
+        "sensors",
+        "refresh",
+        "settings",
+        "schedule",
+        "sync",
+        "monitor_heart",
+        "wifi",
+        "signal_cellular_alt",
+        "error",
+        "info",
+        "warning",
+        "settings_backup_restore",
+        "check_circle"
+      ],
+      "images": [],
+      "cssVars": {},
+      "colorPalette": {
+        "on-tertiary-fixed": "#271901",
+        "error-container": "#ffdad6",
+        "surface-dim": "#d8dadc",
+        "on-secondary-fixed": "#0b1c30",
+        "on-primary": "#ffffff",
+        "tertiary-fixed-dim": "#dec29a",
+        "outline": "#76777d",
+        "primary-container": "#131b2e",
+        "on-secondary": "#ffffff",
+        "surface-container": "#eceef0",
+        "surface": "#f7f9fb",
+        "primary-fixed": "#dae2fd",
+        "primary-fixed-dim": "#bec6e0",
+        "on-secondary-container": "#54647a",
+        "on-error": "#ffffff",
+        "tertiary-container": "#271901",
+        "on-surface": "#191c1e",
+        "primary": "#000000",
+        "on-tertiary-fixed-variant": "#574425",
+        "on-tertiary": "#ffffff",
+        "inverse-on-surface": "#eff1f3",
+        "tertiary": "#000000",
+        "secondary-fixed-dim": "#b7c8e1",
+        "on-primary-fixed-variant": "#3f465c",
+        "surface-container-low": "#f2f4f6",
+        "background": "#f7f9fb",
+        "surface-variant": "#e0e3e5",
+        "on-surface-variant": "#45464d",
+        "surface-tint": "#565e74",
+        "on-primary-fixed": "#131b2e",
+        "on-primary-container": "#7c839b",
+        "inverse-surface": "#2d3133",
+        "on-secondary-fixed-variant": "#38485d",
+        "on-tertiary-container": "#98805d",
+        "surface-container-high": "#e6e8ea",
+        "surface-container-lowest": "#ffffff",
+        "on-background": "#191c1e",
+        "tertiary-fixed": "#fcdeb5",
+        "secondary": "#505f76",
+        "surface-container-highest": "#e0e3e5",
+        "on-error-container": "#93000a",
+        "inverse-primary": "#bec6e0",
+        "outline-variant": "#c6c6cd",
+        "surface-bright": "#f7f9fb",
+        "error": "#ba1a1a",
+        "secondary-container": "#d0e1fb",
+        "secondary-fixed": "#d3e4fe"
+      },
+      "fonts": [
+        "Hanken Grotesk",
+        "Inter",
+        "JetBrains Mono",
+        "Material Symbols Outlined"
+      ],
+      "layoutHints": {
+        "gridCols": 1,
+        "flexDirection": "col"
+      },
+      "behaviorContract": [
+        {
+          "kind": "button",
+          "label": "refresh",
+          "icon": "refresh",
+          "action": "click-action",
+          "expectedBehavior": "produce visible DOM/state/URL feedback; never empty onClick"
+        },
+        {
+          "kind": "button",
+          "label": "settings",
+          "icon": "settings",
+          "action": "navigate",
+          "route": "/settings",
+          "expectedBehavior": "navigate:/settings"
+        },
+        {
+          "kind": "button",
+          "label": "Refresh Status",
+          "icon": "sync",
+          "action": "click-action",
+          "expectedBehavior": "produce visible DOM/state/URL feedback; never empty onClick"
+        },
+        {
+          "kind": "button",
+          "label": "Retry Now",
+          "icon": null,
+          "action": "retry",
+          "expectedBehavior": "retry the failed action and show loading/error feedback"
+        },
+        {
+          "kind": "input",
+          "label": "checkbox",
+          "type": "checkbox",
+          "placeholder": "",
+          "expectedBehavior": "controlled value with onChange; validation if required by PRD"
+        }
+      ],
+      "tabBar": [],
+      "title": "Status Utility - Clean Guard Probe"
+    }
+  }
+}
