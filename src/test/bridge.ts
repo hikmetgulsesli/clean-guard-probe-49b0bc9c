@@ -10,9 +10,9 @@
  * The root composes the store provider (which publishes `window.app`)
  * with the generated Status Utility screen. Because we cannot read the
  * generated screen's TSX source (it is shared, not in scope), we use the
- * `actions` prop contract from the design handoff: at the moment the
- * generated screen declares `StatusUtilityCleanGuardProbeActionId = never`,
- * so we render the screen with no action overrides.
+ * action IDs published in `SCREEN_INDEX.json` to wire the interactive
+ * controls to the store API: `refresh-1`, `refresh-status-3`, and
+ * `retry-now-4` all dispatch `store.api.refresh()`.
  *
  * File extension is `.ts` per the owned scope; we use `React.createElement`
  * instead of JSX so the file type-checks without an extra JSX pragma.
@@ -20,6 +20,7 @@
 
 import {
   createElement,
+  useMemo,
   type CSSProperties,
   type ReactNode,
 } from 'react';
@@ -28,7 +29,6 @@ import { StatusUtilityCleanGuardProbe } from '../screens';
 import {
   CleanGuardProbeProvider,
   useCleanGuardProbeStoreOptional,
-  type CleanGuardProbeStoreValue,
 } from '../features/clean-guard-probe/clean-guard-probe.store';
 
 const ROOT_TEST_ID = 'setfarm-app-root';
@@ -37,8 +37,8 @@ export interface CleanGuardProbeRootProps {
   children?: ReactNode;
   /**
    * Optional props forwarded to the generated Status Utility screen. The
-   * default is undefined: the screen currently declares no action IDs, so
-   * callers do not need to wire any callbacks yet.
+   * default is undefined: callers may pass overrides, but the bridge wires
+   * the screen's action IDs to the live store API before any override.
    */
   screenProps?: Record<string, unknown>;
 }
@@ -54,7 +54,8 @@ function shellStyle(): CSSProperties {
 /**
  * Reads the latest store snapshot from context. Used by the visible screen
  * shell so consumer data surfaces (when present) have a stable reference
- * even after re-renders.
+ * even after re-renders. Also wires the generated screen's action IDs to
+ * the store API so its interactive controls stay live.
  */
 function ScreenShell({
   children,
@@ -63,14 +64,16 @@ function ScreenShell({
   children?: ReactNode;
   screenProps?: Record<string, unknown>;
 }): JSX.Element {
-  const store: CleanGuardProbeStoreValue | null =
-    useCleanGuardProbeStoreOptional();
+  const store = useCleanGuardProbeStoreOptional();
 
-  // We deliberately do NOT call store.api here — the screen already reads
-  // `window.app` if it needs to introspect the live state, and a rerender
-  // here would force the whole shell to refresh on every state change.
-  // Keeping it pure also means the JSX is stable for QA snapshots.
-  void store;
+  const wiredActions = useMemo(() => {
+    if (!store) return {};
+    return {
+      'refresh-1': () => store.api.refresh(),
+      'refresh-status-3': () => store.api.refresh(),
+      'retry-now-4': () => store.api.refresh(),
+    };
+  }, [store]);
 
   return createElement(
     'div',
@@ -81,7 +84,10 @@ function ScreenShell({
       className: 'min-h-screen bg-slate-50 text-slate-950',
       style: shellStyle(),
     },
-    createElement(StatusUtilityCleanGuardProbe, screenProps ?? {}),
+    createElement(StatusUtilityCleanGuardProbe, {
+      actions: wiredActions,
+      ...screenProps,
+    }),
     children,
   );
 }

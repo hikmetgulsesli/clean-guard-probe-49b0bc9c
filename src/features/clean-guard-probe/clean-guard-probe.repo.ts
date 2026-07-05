@@ -25,14 +25,18 @@ export interface PersistenceBackend {
 }
 
 function resolveBackend(): PersistenceBackend | null {
-  if (typeof globalThis === 'undefined') return null;
-  const candidate = (globalThis as { localStorage?: PersistenceBackend })
-    .localStorage;
-  if (!candidate) return null;
-  if (typeof candidate.getItem !== 'function') return null;
-  if (typeof candidate.setItem !== 'function') return null;
-  if (typeof candidate.removeItem !== 'function') return null;
-  return candidate;
+  try {
+    if (typeof globalThis === 'undefined') return null;
+    const candidate = (globalThis as { localStorage?: PersistenceBackend })
+      .localStorage;
+    if (!candidate) return null;
+    if (typeof candidate.getItem !== 'function') return null;
+    if (typeof candidate.setItem !== 'function') return null;
+    if (typeof candidate.removeItem !== 'function') return null;
+    return candidate;
+  } catch {
+    return null;
+  }
 }
 
 function isPreferenceShape(value: unknown): value is CleanGuardProbePreference {

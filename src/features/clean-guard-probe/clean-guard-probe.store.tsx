@@ -30,6 +30,7 @@ import {
 
 import { buildCleanGuardProbeSnapshot } from '../../__fixtures__/clean-guard-probe.fixture';
 import {
+  clearPreference,
   loadPreference,
   savePreference,
   type PreferenceRecovery,
@@ -128,7 +129,6 @@ function reducer(
       return {
         ...state,
         selectedItemId: action.id,
-        itemCount: action.id ? 1 : 0,
       };
     case 'REFRESH':
       return {
@@ -156,7 +156,7 @@ function reducer(
         selectedItemId: null,
         activePanel: DEFAULT_ACTIVE_PANEL,
         itemCount: state.items.length,
-        preference: { ready: state.preference.ready },
+        preference: { ...DEFAULT_PREFERENCE },
         lastUpdatedAt: action.now,
         lastError: null,
       };
@@ -215,6 +215,16 @@ export function CleanGuardProbeProvider(
     createInitialState(initialPayload),
   );
 
+  // Refs let the memoised `api` stay stable across re-renders: we always
+  // read the latest `state` and `nowFn` from the ref instead of listing
+  // them as memo dependencies, so consumers that depend on the `api`
+  // reference do not re-render or loop on every dispatch.
+  const stateRef = useRef(state);
+  stateRef.current = state;
+
+  const nowFnRef = useRef(nowFn);
+  nowFnRef.current = nowFn;
+
   // Publish state to subscribers; wrapping keeps a throwing listener from
   // breaking the dispatch loop.
   useEffect(() => {
@@ -250,7 +260,7 @@ export function CleanGuardProbeProvider(
 
   const api = useMemo<CleanGuardProbePublicApi>(() => {
     return {
-      getState: () => state,
+      getState: () => stateRef.current,
       setActivePanel: (panel) => {
         dispatch({ type: 'SET_ACTIVE_PANEL', panel });
       },
@@ -258,31 +268,34 @@ export function CleanGuardProbeProvider(
         dispatch({ type: 'SELECT_ITEM', id });
       },
       refresh: () => {
-        const snapshot = buildCleanGuardProbeSnapshot(nowFn());
+        const snapshot = buildCleanGuardProbeSnapshot(nowFnRef.current());
         dispatch({
           type: 'REFRESH',
           items: snapshot.items,
-          now: nowFn(),
+          now: nowFnRef.current(),
         });
       },
       toggleReady: () => {
         const next: CleanGuardProbePreference = {
-          ready: !state.preference.ready,
+          ready: !stateRef.current.preference.ready,
         };
         persistPreference(next);
         dispatch({
           type: 'TOGGLE_READY',
           preference: next,
-          now: nowFn(),
+          now: nowFnRef.current(),
         });
       },
       reset: () => {
-        dispatch({ type: 'RESET', now: nowFn() });
+        // Clear persisted preference alongside the in-memory reset so the
+        // app returns to factory defaults across reloads.
+        clearPreference();
+        dispatch({ type: 'RESET', now: nowFnRef.current() });
       },
       subscribe: (listener) => {
         listenersRef.current.add(listener);
         try {
-          listener(state);
+          listener(stateRef.current);
         } catch {
           // ignore
         }
@@ -291,7 +304,7 @@ export function CleanGuardProbeProvider(
         };
       },
     };
-  }, [state, nowFn, persistPreference]);
+  }, [persistPreference]);
 
   const value = useMemo<CleanGuardProbeStoreValue>(
     () => ({ state, api }),
@@ -321,6 +334,9 @@ export interface BridgeProps {
  * Because `getState` and the action closures need to stay reachable after
  * re-renders, we rebuild a stable `app` payload on every state change so
  * QA can always read the live snapshot through `window.app.state`.
+ *
+ * The mount/unmount cleanup of `window.app` lives in its own effect so
+ * state transitions never briefly leave `window.app` undefined.
  */
 export function Bridge({ state, actions, children }: BridgeProps): JSX.Element {
   const actionsRef = useRef<CleanGuardProbePublicApi>(actions);
@@ -343,12 +359,16 @@ export function Bridge({ state, actions, children }: BridgeProps): JSX.Element {
           actionsRef.current.subscribe(listener),
       },
     };
+  }, [state]);
+
+  useEffect(() => {
     return () => {
+      if (typeof window === 'undefined') return;
       if ('app' in window) {
         delete window.app;
       }
     };
-  }, [state]);
+  }, []);
 
   return <>{children}</>;
 }
