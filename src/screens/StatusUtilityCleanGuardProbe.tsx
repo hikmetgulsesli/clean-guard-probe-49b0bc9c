@@ -7,7 +7,10 @@
 // 3. Wire interactive controls through the typed actions prop
 // 4. Replace placeholder data with props/state
 
+import { useCallback, useState } from 'react';
 import { BadgeHelp, CheckCircle2, CircleAlert, Clock, HeartPulse, Info, RadioTower, RefreshCw, Settings, TriangleAlert, Wifi } from "lucide-react";
+import { act_refresh_status, type StatusRefreshResult } from "../features/surf-status-utility/act_refresh_status";
+import { act_toggle_status } from "../features/surf-status-utility/act_toggle_status";
 
 
 export type StatusUtilityCleanGuardProbeActionId = "refresh-1" | "settings-2" | "refresh-status-3" | "retry-now-4";
@@ -18,6 +21,24 @@ export interface StatusUtilityCleanGuardProbeProps {
 }
 
 export function StatusUtilityCleanGuardProbe({ actions }: StatusUtilityCleanGuardProbeProps) {
+  const [readyState, setReadyState] = useState<boolean>(true);
+  const [statusSnapshot, setStatusSnapshot] = useState<StatusRefreshResult>(() =>
+    act_refresh_status(undefined, new Date('2023-10-27T14:32:01Z')),
+  );
+
+  const handleToggleReadyState = useCallback(() => {
+    setReadyState((prev) => act_toggle_status(prev).next);
+  }, []);
+
+  const handleRefreshStatus = useCallback(() => {
+    setStatusSnapshot((prev) => act_refresh_status(prev));
+    actions?.["refresh-status-3"]?.();
+  }, [actions]);
+
+  const handleRetryNow = useCallback(() => {
+    actions?.["retry-now-4"]?.();
+  }, [actions]);
+
   return (
     <>
       {/* TopAppBar JSON Implementation */}
@@ -42,9 +63,9 @@ export function StatusUtilityCleanGuardProbe({ actions }: StatusUtilityCleanGuar
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-md pb-md border-b border-surface-variant">
       <div className="flex flex-col gap-xs">
       <h1 className="font-headline-md text-headline-md text-on-surface">System Status</h1>
-      <span className="font-code-sm text-code-sm text-on-surface-variant flex items-center gap-xs">
+      <span className="font-code-sm text-code-sm text-on-surface-variant flex items-center gap-xs" data-testid="last-updated">
       <Clock className="text-[14px]" aria-hidden={true} focusable="false" />
-                              Last Updated: 2023-10-27 14:32:01 UTC
+                              Last Updated: {statusSnapshot.lastUpdated}
                           </span>
       </div>
       <div className="flex items-center gap-md">
@@ -52,12 +73,12 @@ export function StatusUtilityCleanGuardProbe({ actions }: StatusUtilityCleanGuar
       <label className="flex items-center cursor-pointer gap-sm">
       <span className="font-data-label text-data-label text-on-surface-variant uppercase tracking-wider">Ready State</span>
       <div className="relative">
-      <input defaultChecked={true} className="sr-only peer" type="checkbox" />
+      <input checked={readyState} onChange={handleToggleReadyState} className="sr-only peer" type="checkbox" data-testid="ready-state-toggle" aria-label="Ready State" />
       <div className="w-10 h-6 bg-surface-variant peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-outline-variant after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
       </div>
       </label>
       {/* ACT_REFRESH_STATUS */}
-      <button className="bg-primary text-on-primary font-body-sm text-body-sm px-md py-sm rounded hover:opacity-90 active:opacity-100 transition-opacity flex items-center gap-xs" type="button" data-action-id="refresh-status-3" onClick={actions?.["refresh-status-3"]}>
+      <button className="bg-primary text-on-primary font-body-sm text-body-sm px-md py-sm rounded hover:opacity-90 active:opacity-100 transition-opacity flex items-center gap-xs" type="button" data-action-id="refresh-status-3" onClick={handleRefreshStatus}>
       <RefreshCw className="text-[16px]" aria-hidden={true} focusable="false" />
                               Refresh Status
                           </button>
@@ -73,7 +94,7 @@ export function StatusUtilityCleanGuardProbe({ actions }: StatusUtilityCleanGuar
       <HeartPulse className="text-on-surface-variant text-[20px]" aria-hidden={true} focusable="false" />
       </div>
       <div className="flex items-end gap-sm">
-      <span className="font-headline-md text-headline-md text-on-surface leading-none">Optimal</span>
+      <span className="font-headline-md text-headline-md text-on-surface leading-none" data-testid="probe-health-value">Optimal</span>
       </div>
       <span className="font-code-sm text-code-sm text-[#10B981]">All systems nominal</span>
       </div>
@@ -85,7 +106,7 @@ export function StatusUtilityCleanGuardProbe({ actions }: StatusUtilityCleanGuar
       <Wifi className="text-on-surface-variant text-[20px]" aria-hidden={true} focusable="false" />
       </div>
       <div className="flex items-end gap-sm">
-      <span className="font-headline-md text-headline-md text-on-surface leading-none">24ms</span>
+      <span className="font-headline-md text-headline-md text-on-surface leading-none" data-testid="connection-latency-value">{statusSnapshot.latencyMs}ms</span>
       </div>
       <span className="font-code-sm text-code-sm text-on-surface-variant">Latency to gateway</span>
       </div>
@@ -97,7 +118,7 @@ export function StatusUtilityCleanGuardProbe({ actions }: StatusUtilityCleanGuar
       <BadgeHelp className="text-on-surface-variant text-[20px]" aria-hidden={true} focusable="false" />
       </div>
       <div className="flex items-end gap-sm">
-      <span className="font-headline-md text-headline-md text-on-surface leading-none">-78 dBm</span>
+      <span className="font-headline-md text-headline-md text-on-surface leading-none" data-testid="signal-strength-value">{statusSnapshot.signalDbm} dBm</span>
       </div>
       <span className="font-code-sm text-code-sm text-[#F59E0B]">Slight degradation</span>
       </div>
@@ -109,7 +130,7 @@ export function StatusUtilityCleanGuardProbe({ actions }: StatusUtilityCleanGuar
       <h3 className="font-body-md text-body-md font-medium text-on-error-container">Data Sync Interrupted</h3>
       <p className="font-body-sm text-body-sm text-on-error-container opacity-80">Connection lost to secondary telemetry node. Retrying automatically in 30 seconds.</p>
       </div>
-      <button className="text-on-error-container font-data-label text-data-label hover:underline px-sm py-xs" type="button" data-action-id="retry-now-4" onClick={actions?.["retry-now-4"]}>Retry Now</button>
+      <button className="text-on-error-container font-data-label text-data-label hover:underline px-sm py-xs" type="button" data-action-id="retry-now-4" onClick={handleRetryNow}>Retry Now</button>
       </div>
       {/* Activity Log */}
       <div className="flex flex-col gap-sm">
